@@ -53,7 +53,7 @@ backtor serve --key <64 hex chars>
 backtor connect <address>.onion
 ```
 
-The `.onion` suffix is optional. Type `exit` or press `Ctrl-D` to end the
+The `.onion` suffix is optional. Press `Ctrl-D` to end the
 session.
 
 ---
