@@ -1,3 +1,5 @@
+[![Rust](https://github.com/CrazyChaoz/backtor/actions/workflows/rust.yml/badge.svg)](https://github.com/CrazyChaoz/backtor/actions/workflows/rust.yml)
+
 # backtor
 
 A Tor-native remote shell. Expose a local shell through a Tor hidden service
