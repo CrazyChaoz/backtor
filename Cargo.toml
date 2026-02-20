@@ -1,0 +1,50 @@
+[package]
+name = "backtor"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Tor / arti ecosystem
+arti-client = { version = "0.39.0", features = [
+    "onion-service-service",
+    "onion-service-client",
+    "static",
+    "experimental-api",
+] }
+tor-hsservice = "0.39.0"
+tor-hscrypto = "0.39.0"
+tor-hsrproxy = "0.39.0"
+tor-proto = "0.39.0"
+tor-rtcompat = { version = "0.39.0", features = ["static"] }
+tor-cell = "0.39.0"
+tor-llcrypto = "0.39.0"
+safelog = "0.7"
+
+
+ed25519-dalek = "2.2.0"
+sha3 = "0.10"
+base32 = "0.5"
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["compat"] }
+futures = "0.3"
+
+# PTY / shell spawning
+portable-pty = "0.9"
+
+# Logging
+log = "0.4"
+
+# Terminal raw mode (client-side)
+crossterm = "0.29"
+
+# Error handling
+anyhow = "1"
+clap = { version = "4.5.60", features = ["derive"] }
+env_logger = "0.11.9"
+hex = "0.4.3"
+
+# Unix: needed to look up the current UID for /etc/passwd fallback
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
