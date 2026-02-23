@@ -15,7 +15,7 @@ NAT, firewalls, or restrictive networks where exposing a port is not possible.
 ## How it works
 
 **Server side** — backtor registers a Tor onion service and accepts incoming
-connections on port 22. Each connection is handed a freshly spawned login shell
+connections on port 23. Each connection is handed a freshly spawned login shell
 through a PTY. The onion address is printed to stdout once the service is
 reachable.
 
@@ -37,7 +37,7 @@ An ephemeral onion address is generated on each run. Once bootstrapped, the
 address is printed:
 
 ```
-Shell service available at: <address>.onion:22
+Shell service available at: <address>.onion:23
 ```
 
 #### Start a server with a stable address

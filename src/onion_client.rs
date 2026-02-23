@@ -7,7 +7,7 @@ use tokio_util::compat::FuturesAsyncReadCompatExt;
 use tor_rtcompat::PreferredRuntime;
 
 /// The port the server shell service listens on (matches `SHELL_PORT` in onion_server.rs).
-const SHELL_PORT: u16 = 22;
+const SHELL_PORT: u16 = 23;
 
 /// A Tor-native shell client.
 ///

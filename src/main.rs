@@ -3,7 +3,7 @@ mod onion_server;
 mod utils;
 
 use anyhow::Result;
-use arti_client::{TorClient, TorClientConfig};
+use arti_client::{TorClient, config::TorClientConfigBuilder};
 use clap::{Parser, Subcommand};
 use log::debug;
 use onion_client::OnionShellClient;
@@ -113,9 +113,16 @@ async fn main() -> Result<()> {
     let command = cli.command.unwrap_or(Command::Serve { key: None });
 
     debug!("Bootstrapping Tor – this may take a moment…");
-
-    let config = TorClientConfig::default();
-    let tor_client = TorClient::<PreferredRuntime>::create_bootstrapped(config).await?;
+    
+    let current_directory = std::env::current_dir().expect("failed to determine current directory");
+    
+    let mut cfg_builder = TorClientConfigBuilder::from_directories(
+        current_directory.join(".backtor").join("config"),
+        current_directory.join(".backtor").join("cache"),
+    );
+    cfg_builder.storage().permissions().dangerously_trust_everyone();
+    let cfg = cfg_builder.build()?;
+    let tor_client = TorClient::<PreferredRuntime>::create_bootstrapped(cfg).await?;
 
     debug!("Tor bootstrapped.");
 

@@ -24,8 +24,8 @@ use tor_hsrproxy::{
     config::{Encapsulation, ProxyAction, ProxyConfigBuilder, ProxyPattern, ProxyRule, TargetAddr},
 };
 
-// The port on which the shell service listens (SSH-like)
-const SHELL_PORT: u16 = 22;
+// The port on which the shell service listens (telnet-like)
+const SHELL_PORT: u16 = 23;
 
 type RunningOnionServices = HashMap<String, CancellationToken>;
 
