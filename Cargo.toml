@@ -1,6 +1,6 @@
 [package]
 name = "backtor"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 
 [dependencies]
@@ -44,6 +44,7 @@ anyhow = "1"
 clap = { version = "4.5.60", features = ["derive"] }
 env_logger = "0.11.9"
 hex = "0.4.3"
+tracing-subscriber = "0.3.22"
 
 # Unix: needed to look up the current UID for /etc/passwd fallback
 [target.'cfg(unix)'.dependencies]

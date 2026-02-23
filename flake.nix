@@ -48,6 +48,8 @@
 
           strictDeps = false;
           doCheck = false;
+          
+          CARGO_PROFILE = "release";
 
           CARGO_BUILD_TARGET = "x86_64-pc-windows-gnu";
           CARGO_BUILD_RUSTFLAGS = "-C target-feature=+crt-static";
@@ -68,6 +70,8 @@
 
           strictDeps = false;
           doCheck = false;
+          
+          CARGO_PROFILE = "release";
 
           CARGO_BUILD_TARGET = "x86_64-unknown-linux-musl";
           CARGO_BUILD_RUSTFLAGS = "-C target-feature=+crt-static";

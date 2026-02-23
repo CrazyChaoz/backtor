@@ -33,7 +33,7 @@ jobs:
       run: rustup target add x86_64-unknown-linux-musl x86_64-pc-windows-gnu
 
     - name: Build the executable
-      run: cargo build --release --target x86_64-unknown-linux-musl --target x86_64-pc-windows-gnu
+      run: CARGO_BUILD_RUSTFLAGS="-C target-feature=+crt-static" cargo build --release --target x86_64-unknown-linux-musl --target x86_64-pc-windows-gnu
 
     - name: Copy files in target to root
       run: cp target/x86_64-pc-windows-gnu/release/backtor.exe backtor-windows.exe && cp target/x86_64-unknown-linux-musl/release/backtor backtor-linux
