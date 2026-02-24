@@ -1,4 +1,6 @@
+#[cfg(feature = "client")]
 mod onion_client;
+#[cfg(feature = "server")]
 mod onion_server;
 mod utils;
 
@@ -6,7 +8,9 @@ use anyhow::Result;
 use arti_client::{TorClient, config::TorClientConfigBuilder};
 use clap::{Parser, Subcommand};
 use log::debug;
+#[cfg(feature = "client")]
 use onion_client::OnionShellClient;
+#[cfg(feature = "server")]
 use onion_server::onion_service_from_sk;
 use tor_rtcompat::PreferredRuntime;
 use tracing_subscriber::{
@@ -32,6 +36,7 @@ struct Cli {
 #[derive(Debug, Subcommand)]
 enum Command {
     /// Expose the local shell as a Tor onion service (default when no subcommand is given).
+    #[cfg(feature = "server")]
     Serve {
         /// A 32-byte hex secret key used to derive a stable onion address.
         /// If omitted a fresh ephemeral address is generated each run.
@@ -40,6 +45,7 @@ enum Command {
     },
 
     /// Connect to a backtor shell service.
+    #[cfg(feature = "client")]
     Connect {
         /// The onion address to connect to (with or without the .onion suffix).
         address: String,
@@ -128,6 +134,7 @@ async fn main() -> Result<()> {
 
     match command {
         // ── Server mode ───────────────────────────────────────────────────────
+        #[cfg(feature = "server")]
         Command::Serve { key } => {
             let secret_key: Option<[u8; 32]> = match key {
                 Some(hex) => {
@@ -149,6 +156,7 @@ async fn main() -> Result<()> {
         }
 
         // ── Client mode ───────────────────────────────────────────────────────
+        #[cfg(feature = "client")]
         Command::Connect { address } => {
             debug!("Connecting to {address}…");
             OnionShellClient::new(tor_client).connect(&address).await?;

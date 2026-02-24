@@ -10,6 +10,11 @@
     };
 
     flake-utils.url = "github:numtide/flake-utils";
+    
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -18,6 +23,7 @@
       crane,
       fenix,
       flake-utils,
+      rust-overlay,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -27,6 +33,7 @@
         import nixpkgs {
           system = system;
           config.allowUnsupportedSystem = true;
+          overlays = [ (import rust-overlay) ];
         }
       );
         
@@ -40,50 +47,35 @@
             targets.x86_64-unknown-linux-musl.latest.rust-std
           ];
 
-        craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
+        buildForArchitecture =
+          custom_pkgs:
+          ((crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default)).buildPackage {
+            name = "arti-facts";
+            src = ./.;
 
-        windows = craneLib.buildPackage {
-          name = "backtor-windows";
-          src = ./.;
+            strictDeps = false;
+            doCheck = false;
 
-          strictDeps = false;
-          doCheck = false;
+            CARGO_BUILD_TARGET = "${custom_pkgs.stdenv.hostPlatform.rust.rustcTarget}";
+            CARGO_BUILD_RUSTFLAGS = "-C target-feature=+crt-static";
+            
+            TARGET_CC = "${custom_pkgs.stdenv.cc}/bin/${custom_pkgs.stdenv.cc.targetPrefix}cc";
+
+            depsBuildBuild = [
+              custom_pkgs.stdenv.cc
+              pkgs.perl
+            ]
+            ++ custom_pkgs.lib.optionals custom_pkgs.stdenv.hostPlatform.isWindows [
+              custom_pkgs.windows.pthreads
+            ]
+            ++ custom_pkgs.lib.optionals custom_pkgs.stdenv.hostPlatform.isDarwin [
+              custom_pkgs.libiconv
+            ];
+          };
           
-          CARGO_PROFILE = "release";
+          linux = buildForArchitecture pkgs.pkgsCross.musl64;
+          windows = buildForArchitecture pkgs.pkgsCross.mingwW64;
 
-          CARGO_BUILD_TARGET = "x86_64-pc-windows-gnu";
-          CARGO_BUILD_RUSTFLAGS = "-C target-feature=+crt-static";
-
-          # fixes issues related to libring
-          TARGET_CC = "${pkgs.pkgsCross.mingwW64.stdenv.cc}/bin/${pkgs.pkgsCross.mingwW64.stdenv.cc.targetPrefix}cc";
-
-          depsBuildBuild = with pkgs; [
-            pkgsCross.mingwW64.stdenv.cc
-            pkgsCross.mingwW64.windows.pthreads
-            perl
-          ];
-        };
-
-        linux = craneLib.buildPackage {
-          name = "backtor-linux";
-          src = ./.;
-
-          strictDeps = false;
-          doCheck = false;
-          
-          CARGO_PROFILE = "release";
-
-          CARGO_BUILD_TARGET = "x86_64-unknown-linux-musl";
-          CARGO_BUILD_RUSTFLAGS = "-C target-feature=+crt-static";
-
-          TARGET_CC = "${pkgs.pkgsCross.musl64.stdenv.cc}/bin/${pkgs.pkgsCross.musl64.stdenv.cc.targetPrefix}cc";
-
-          nativeBuildInputs = with pkgs; [
-            clang
-            perl
-            libclang
-          ];
-        };
       in
       {
         packages.linux = linux;
