@@ -3,12 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     crane.url = "github:ipetkov/crane";
-
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    
     flake-utils.url = "github:numtide/flake-utils";
     
     rust-overlay = {
@@ -21,7 +16,6 @@
     {
       nixpkgs,
       crane,
-      fenix,
       flake-utils,
       rust-overlay,
       ...
@@ -38,19 +32,10 @@
       );
         
 
-        toolchain =
-          with fenix.packages.${system};
-          combine [
-            minimal.rustc
-            minimal.cargo
-            targets.x86_64-pc-windows-gnu.latest.rust-std
-            targets.x86_64-unknown-linux-musl.latest.rust-std
-          ];
-
         buildForArchitecture =
           custom_pkgs:
           ((crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default)).buildPackage {
-            name = "arti-facts";
+            name = "arti-facts-${custom_pkgs.stdenv.cc.targetPrefix}";
             src = ./.;
 
             strictDeps = false;
