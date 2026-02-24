@@ -35,7 +35,7 @@
         buildForArchitecture =
           custom_pkgs:
           ((crane.mkLib pkgs).overrideToolchain (p: p.rust-bin.stable.latest.default)).buildPackage {
-            name = "arti-facts-${custom_pkgs.stdenv.cc.targetPrefix}";
+            name = "backtor-${custom_pkgs.stdenv.hostPlatform.rust.rustcTarget}";
             src = ./.;
 
             strictDeps = false;
