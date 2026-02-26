@@ -50,7 +50,7 @@
               pkgs.perl
             ]
             ++ custom_pkgs.lib.optionals custom_pkgs.stdenv.hostPlatform.isWindows [
-              custom_pkgs.pkgsBuildHost.windows.pthreads
+              custom_pkgs.pkgsHostTarget.windows.pthreads
             ]
             ++ custom_pkgs.lib.optionals custom_pkgs.stdenv.hostPlatform.isDarwin [
               custom_pkgs.libiconv
